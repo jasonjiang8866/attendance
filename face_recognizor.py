@@ -34,7 +34,7 @@ class FaceRecognition:
             face_encoding = face_recognition.face_encodings(face_image)[0]
 
             self.known_face_encodings.append(face_encoding)
-            self.known_face_names.append(image)
+            self.known_face_names.append(image.split('.')[0])
         print(self.known_face_names)
 
     def run_recognition(self):
