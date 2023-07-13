@@ -1,3 +1,4 @@
 faces
 faceenv
 *.dat
+__pycache__
