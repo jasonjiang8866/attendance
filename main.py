@@ -9,7 +9,7 @@ app = FastAPI()
 app.fr = FaceRecognition()
 templates = Jinja2Templates(directory="templates")
 
-def gen_frames():
+def gen_frames(flag):
     try:
         app.camera.release()
     except Exception as e:
@@ -32,8 +32,9 @@ def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get('/video_feed')
-def video_feed():
-    return StreamingResponse(gen_frames(), media_type='multipart/x-mixed-replace; boundary=frame')
+def video_feed(request: Request):
+    flag = request.query_params.get('flag')
+    return StreamingResponse(gen_frames(flag), media_type='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
     uvicorn.run(app, host='127.0.0.1', port=8000)
