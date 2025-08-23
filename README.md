@@ -42,23 +42,48 @@ A real-time attendance tracking system that uses facial recognition technology t
 
 ## 🔧 Installation
 
-### 1. Clone the Repository
+### Option 1: Automatic Setup (Recommended)
+
+We provide automated setup scripts that use [uv](https://github.com/astral-sh/uv) for fast and reliable Python dependency management:
+
+```bash
+# Clone the repository
+git clone https://github.com/jasonjiang8866/attendance.git
+cd attendance
+
+# Run the automated setup script (Python)
+python setup.py
+
+# Or use the shell script alternative
+chmod +x setup.sh
+./setup.sh
+```
+
+The setup script will:
+- Install uv package manager if not already installed
+- Create a virtual environment and install all Python dependencies
+- Install face recognition models
+- Create the required 'faces' directory
+
+### Option 2: Manual Setup
+
+#### 1. Clone the Repository
 ```bash
 git clone https://github.com/jasonjiang8866/attendance.git
 cd attendance
 ```
 
-### 2. Backend Setup
+#### 2. Backend Setup
 ```bash
-# Install Python dependencies
-pip install fastapi uvicorn opencv-python face-recognition numpy
+# Install Python dependencies manually
+pip install fastapi uvicorn opencv-python face-recognition numpy jinja2
 
 # Create a 'faces' directory and add known face images
 mkdir faces
 # Add images of known people to the faces directory (format: name.jpg)
 ```
 
-### 3. Frontend Setup
+#### 3. Frontend Setup
 ```bash
 # Navigate to the Angular application
 cd UI/i-attendance
@@ -73,10 +98,19 @@ npm run build
 ## 🚀 Usage
 
 ### Running the Backend
+
+If you used the automated setup (recommended):
+```bash
+# From the repository root
+uv run python main.py
+```
+
+If you used manual installation:
 ```bash
 # From the repository root
 python main.py
 ```
+
 The FastAPI server will start on `http://127.0.0.1:8000`
 
 ### Running the Frontend
@@ -100,6 +134,10 @@ attendance/
 ├── README.md                 # This file
 ├── main.py                   # FastAPI backend application
 ├── face_recognizor.py        # Face recognition logic and processing
+├── setup.py                  # Automated Python setup script for developers
+├── setup.sh                  # Automated shell setup script for developers
+├── pyproject.toml           # Python project configuration and dependencies
+├── .python-version          # Python version specification for uv
 ├── templates/                # HTML templates for the web interface
 │   └── index.html           # Main template for video streaming
 ├── UI/                      # Frontend application
@@ -107,7 +145,7 @@ attendance/
 │       ├── src/             # Angular source code
 │       ├── package.json     # Node.js dependencies
 │       └── README.md        # Angular-specific README
-├── faces/                   # Directory for known face images (create manually)
+├── faces/                   # Directory for known face images (created by setup)
 ├── .gitignore              # Git ignore rules
 └── known_face_*.dat        # Generated face encoding files
 ```
