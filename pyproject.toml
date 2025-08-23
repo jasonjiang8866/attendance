@@ -1,0 +1,13 @@
+[project]
+name = "attendance"
+version = "0.1.0"
+description = "A real-time attendance tracking system that uses facial recognition technology"
+requires-python = ">=3.7"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "opencv-python",
+    "face-recognition",
+    "numpy",
+    "jinja2",
+]
