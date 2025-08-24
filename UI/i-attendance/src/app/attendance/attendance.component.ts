@@ -120,6 +120,11 @@ export class AttendanceComponent implements OnInit {
     return new Date(timestamp).toLocaleString();
   }
 
+  onVideoError(event: any) {
+    const target = event.target as HTMLImageElement;
+    target.src = 'assets/no-video.png';
+  }
+
   private showMessage(message: string) {
     this.snackBar.open(message, 'Close', {
       duration: 3000,

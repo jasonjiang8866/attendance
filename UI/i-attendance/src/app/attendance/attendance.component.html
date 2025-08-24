@@ -69,7 +69,7 @@
                 <img [src]="videoFeedUrl" 
                      alt="Live video feed" 
                      class="video-feed"
-                     (error)="$event.target.src='assets/no-video.png'">
+                     (error)="onVideoError($event)">
               </div>
               <p class="video-description">
                 Position yourself in front of the camera. If you are recognized, you can mark your attendance below.
