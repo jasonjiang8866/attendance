@@ -11,6 +11,23 @@ A real-time attendance tracking system that uses facial recognition technology t
 - **Automatic Attendance**: Seamless attendance tracking through facial recognition
 - **Known Face Management**: System to encode and store known faces for recognition
 
+## 📸 User Interface Screenshots
+
+### Face Registration
+The system provides an intuitive interface for registering new faces. Users can upload a clear photo along with their name to register for attendance tracking.
+
+![Face Registration Interface](screenshots/face-registration-tab.png)
+
+### Live Attendance Tracking
+The main attendance interface features a live video feed with real-time face recognition capabilities, plus manual attendance options as a fallback.
+
+![Take Attendance Interface](screenshots/take-attendance-tab.png)
+
+### Attendance Records
+View and manage attendance history with a clean, organized interface showing timestamps and recent attendance activities.
+
+![Attendance Records Interface](screenshots/attendance-records-tab.png)
+
 ## 🛠️ Technology Stack
 
 ### Backend
