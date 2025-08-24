@@ -9,6 +9,28 @@
   min-height: 400px;
 }
 
+.instructions {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: #e3f2fd;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  border-left: 4px solid #2196f3;
+}
+
+.instructions .info-icon {
+  color: #2196f3;
+  margin-top: 2px;
+}
+
+.instructions p {
+  margin: 0;
+  color: #1565c0;
+  line-height: 1.4;
+}
+
 .full-width {
   width: 100%;
   margin-bottom: 15px;
@@ -33,12 +55,22 @@
 }
 
 .file-name {
-  color: #666;
+  color: #4caf50;
   font-size: 14px;
+  font-weight: 500;
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.file-hint {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #666;
+  font-size: 12px;
+  font-style: italic;
 }
 
 .submit-button {
@@ -46,6 +78,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 150px;
+  justify-content: center;
 }
 
 .registered-faces {
@@ -69,6 +103,7 @@
   margin: 20px 0;
   display: flex;
   justify-content: center;
+  position: relative;
 }
 
 .video-feed {
@@ -81,10 +116,54 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.video-description {
+.video-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 40px;
+  max-width: 640px;
+  width: 100%;
+  min-height: 300px;
+}
+
+.video-placeholder .large-icon {
+  font-size: 64px;
+  color: #999;
+  margin-bottom: 15px;
+}
+
+.video-placeholder h4 {
   color: #666;
-  font-style: italic;
   margin: 10px 0;
+}
+
+.video-placeholder p {
+  color: #888;
+  margin: 10px 0 5px 0;
+}
+
+.video-placeholder ul {
+  text-align: left;
+  color: #888;
+  margin: 10px 0 20px 0;
+}
+
+.video-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  color: #4caf50;
+  font-size: 14px;
+}
+
+.status-icon.success {
+  color: #4caf50;
 }
 
 .manual-attendance {
@@ -95,29 +174,138 @@
 }
 
 .manual-attendance h4 {
-  margin: 0 0 20px 0;
+  margin: 0 0 10px 0;
   color: #333;
+}
+
+.manual-description {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.records-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.records-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.records-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #e8f5e8;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  color: #2e7d2e;
+  font-weight: 500;
+}
+
+.attendance-list {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.attendance-list .mat-list-item {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.attendance-list .mat-list-item:hover {
+  background-color: #f9f9f9;
+}
+
+.attendance-list .mat-list-item:last-child {
+  border-bottom: none;
+}
+
+.recent-record {
+  background-color: #fff3e0 !important;
+}
+
+.recent-record:hover {
+  background-color: #ffe0b2 !important;
+}
+
+.recent-icon {
+  color: #ff9800 !important;
+}
+
+.recent-chip {
+  background-color: #ff9800;
+  color: white;
+  font-size: 11px;
+  height: 20px;
+  min-height: 20px;
+  line-height: 20px;
+}
+
+.record-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.record-time {
+  color: #666;
+  font-size: 13px;
+}
+
+.record-date {
+  color: #888;
+  font-size: 12px;
 }
 
 .records-container {
   max-height: 400px;
   overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
 }
 
 .no-records {
   text-align: center;
   color: #666;
-  font-style: italic;
-  padding: 40px;
+  padding: 60px 20px;
+}
+
+.no-records .large-icon {
+  font-size: 64px;
+  color: #ccc;
+  margin-bottom: 15px;
+}
+
+.no-records h4 {
+  color: #666;
+  margin: 15px 0 10px 0;
+}
+
+.no-records p {
+  color: #888;
+  margin-bottom: 25px;
+}
+
+.loading-records {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.loading-records p {
+  margin-top: 20px;
 }
 
 .refresh-button {
-  margin-top: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 120px;
+  justify-content: center;
 }
 
 .secondary-text {
@@ -136,17 +324,28 @@
     padding: 15px 10px;
   }
   
+  .instructions {
+    flex-direction: column;
+    text-align: center;
+  }
+  
   .file-input-container {
     flex-direction: column;
     align-items: stretch;
   }
   
-  .file-name {
-    max-width: 100%;
-    text-align: center;
-  }
-  
   .video-feed {
     max-width: 100%;
+  }
+
+  .video-placeholder {
+    padding: 30px 20px;
+    min-height: 250px;
+  }
+
+  .records-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
   }
 }

@@ -18,6 +18,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { NavComponent } from './nav/nav.component';
 
@@ -44,6 +46,8 @@ import { NavComponent } from './nav/nav.component';
     MatListModule,
     MatSnackBarModule,
     MatSelectModule,
+    MatProgressSpinnerModule,
+    MatChipsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

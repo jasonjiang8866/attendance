@@ -16,6 +16,12 @@ export class AttendanceComponent implements OnInit {
   selectedFile: File | null = null;
   videoFeedUrl: string;
   selectedTabIndex = 0;
+  
+  // Loading states
+  isLoading = false;
+  isMarkingAttendance = false;
+  isLoadingRecords = false;
+  videoError = false;
 
   constructor(
     private fb: FormBuilder,
@@ -50,43 +56,49 @@ export class AttendanceComponent implements OnInit {
   onRegisterFace() {
     if (this.registrationForm.valid && this.selectedFile) {
       const name = this.registrationForm.get('name')?.value;
+      this.isLoading = true;
       
       this.attendanceService.registerFace(name, this.selectedFile).subscribe({
         next: (response) => {
+          this.isLoading = false;
           if (response.success) {
-            this.showMessage(response.message);
+            this.showMessage(`✅ ${response.message}`);
             this.registrationForm.reset();
             this.selectedFile = null;
             this.loadRegisteredFaces();
           } else {
-            this.showMessage('Registration failed: ' + response.message);
+            this.showMessage(`❌ Registration failed: ${response.message}`);
           }
         },
         error: (error) => {
-          this.showMessage('Registration failed: ' + error.message);
+          this.isLoading = false;
+          this.showMessage(`❌ Registration failed: ${error.message || 'Connection error'}`);
         }
       });
     } else {
-      this.showMessage('Please fill in the name and select an image file');
+      this.showMessage('Please fill in your name and select an image file');
     }
   }
 
   onMarkAttendance() {
     if (this.attendanceForm.valid) {
       const name = this.attendanceForm.get('name')?.value;
+      this.isMarkingAttendance = true;
       
       this.attendanceService.markAttendance(name).subscribe({
         next: (response) => {
+          this.isMarkingAttendance = false;
           if (response.success) {
-            this.showMessage(response.message);
+            this.showMessage(`✅ ${response.message}`);
             this.attendanceForm.reset();
             this.loadAttendanceRecords();
           } else {
-            this.showMessage(response.message);
+            this.showMessage(`⚠️ ${response.message}`);
           }
         },
         error: (error) => {
-          this.showMessage('Failed to mark attendance: ' + error.message);
+          this.isMarkingAttendance = false;
+          this.showMessage(`❌ Failed to mark attendance: ${error.message || 'Connection error'}`);
         }
       });
     }
@@ -104,14 +116,18 @@ export class AttendanceComponent implements OnInit {
   }
 
   loadAttendanceRecords() {
+    this.isLoadingRecords = true;
     this.attendanceService.getAttendanceRecords().subscribe({
       next: (response) => {
+        this.isLoadingRecords = false;
         this.attendanceRecords = response.records.sort((a, b) => 
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         );
       },
       error: (error) => {
+        this.isLoadingRecords = false;
         console.error('Failed to load attendance records:', error);
+        this.showMessage('❌ Failed to load attendance records. Please check your connection.');
       }
     });
   }
@@ -120,9 +136,20 @@ export class AttendanceComponent implements OnInit {
     return new Date(timestamp).toLocaleString();
   }
 
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString();
+  }
+
   onVideoError(event: any) {
     const target = event.target as HTMLImageElement;
-    target.src = 'assets/no-video.png';
+    this.videoError = true;
+    console.warn('Video feed error:', event);
+  }
+
+  retryVideoFeed() {
+    this.videoError = false;
+    // Force reload the video feed by adding a timestamp
+    this.videoFeedUrl = `${this.attendanceService.getVideoFeedUrl()}?t=${Date.now()}`;
   }
 
   private showMessage(message: string) {
