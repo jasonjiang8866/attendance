@@ -31,18 +31,36 @@ class FaceRecognition:
     def encode_faces(self):
         self.known_face_encodings = []
         self.known_face_names = []
-        for image in os.listdir('faces'):
-            face_image = face_recognition.load_image_file(f"faces/{image}")
-            face_encoding = face_recognition.face_encodings(face_image)[0]
-
-            self.known_face_encodings.append(face_encoding)
-            self.known_face_names.append(image.split('.')[0])
+        
+        # Check if faces directory exists
+        if not os.path.exists('faces'):
+            os.makedirs('faces')
+            return
             
+        # Only process if there are face images
+        face_files = [f for f in os.listdir('faces') if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+        if not face_files:
+            return
+            
+        for image in face_files:
+            try:
+                face_image = face_recognition.load_image_file(f"faces/{image}")
+                face_encodings = face_recognition.face_encodings(face_image)
+                
+                if face_encodings:  # Check if face was found in image
+                    face_encoding = face_encodings[0]
+                    self.known_face_encodings.append(face_encoding)
+                    self.known_face_names.append(image.split('.')[0])
+            except Exception as e:
+                print(f"Error processing {image}: {e}")
+                continue
+            
+        # Save encodings if we have any
+        if self.known_face_encodings:
             with open('known_face_encodings.dat', 'wb') as f:
                 pickle.dump(self.known_face_encodings, f)
             with open('known_face_names.dat', 'wb') as f:
                 pickle.dump(self.known_face_names, f)
-        # print(self.known_face_names)
 
 
     def process_frame(self, frame):
