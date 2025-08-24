@@ -1,2 +1,201 @@
-<p>attendance works!</p>
-<button class="btn btn-primary">OK</button>
+<div class="attendance-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Face Recognition Attendance System</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+        
+        <!-- Face Registration Tab -->
+        <mat-tab label="Register Face">
+          <div class="tab-content">
+            <div class="instructions">
+              <mat-icon class="info-icon">info</mat-icon>
+              <p>Upload a clear photo of your face to register for attendance tracking. Make sure your face is well-lit and looking directly at the camera.</p>
+            </div>
+
+            <form [formGroup]="registrationForm" (ngSubmit)="onRegisterFace()">
+              <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Full Name</mat-label>
+                <input matInput formControlName="name" placeholder="Enter your full name">
+                <mat-hint>Enter your complete name as it should appear in attendance records</mat-hint>
+                <mat-error *ngIf="registrationForm.get('name')?.hasError('required')">
+                  Name is required
+                </mat-error>
+                <mat-error *ngIf="registrationForm.get('name')?.hasError('minlength')">
+                  Name must be at least 2 characters long
+                </mat-error>
+              </mat-form-field>
+
+              <div class="file-input-container">
+                <input type="file" 
+                       (change)="onFileSelected($event)" 
+                       accept="image/*" 
+                       #fileInput 
+                       class="file-input">
+                <button mat-raised-button 
+                        type="button" 
+                        (click)="fileInput.click()" 
+                        class="file-button">
+                  <mat-icon>photo_camera</mat-icon>
+                  Select Photo
+                </button>
+                <span class="file-name" *ngIf="selectedFile">{{ selectedFile.name }}</span>
+                <div class="file-hint" *ngIf="!selectedFile">
+                  <mat-icon>info_outline</mat-icon>
+                  <span>Choose a clear, front-facing photo (JPG, PNG)</span>
+                </div>
+              </div>
+
+              <button mat-raised-button 
+                      color="primary" 
+                      type="submit" 
+                      [disabled]="!registrationForm.valid || !selectedFile || isLoading"
+                      class="submit-button">
+                <mat-icon *ngIf="!isLoading">person_add</mat-icon>
+                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                <span>{{ isLoading ? 'Registering...' : 'Register Face' }}</span>
+              </button>
+            </form>
+
+            <div class="registered-faces" *ngIf="registeredFaces.length > 0">
+              <h4>Registered Faces:</h4>
+              <mat-list>
+                <mat-list-item *ngFor="let face of registeredFaces">
+                  <mat-icon mat-list-icon>person</mat-icon>
+                  <div mat-line>{{ face }}</div>
+                </mat-list-item>
+              </mat-list>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Live Feed & Attendance Tab -->
+        <mat-tab label="Take Attendance">
+          <div class="tab-content">
+            <div class="instructions">
+              <mat-icon class="info-icon">info</mat-icon>
+              <p>Position yourself in front of the camera for automatic face recognition, or manually select your name below.</p>
+            </div>
+
+            <div class="video-section">
+              <h3>Live Video Feed</h3>
+              <div class="video-container">
+                <img [src]="videoFeedUrl" 
+                     alt="Live video feed" 
+                     class="video-feed"
+                     (error)="onVideoError($event)"
+                     [style.display]="videoError ? 'none' : 'block'">
+                <div class="video-placeholder" *ngIf="videoError">
+                  <mat-icon class="large-icon">videocam_off</mat-icon>
+                  <h4>Camera Feed Unavailable</h4>
+                  <p>Please check that:</p>
+                  <ul>
+                    <li>The backend server is running</li>
+                    <li>Your camera is connected and working</li>
+                    <li>You've granted camera permissions</li>
+                  </ul>
+                  <button mat-stroked-button (click)="retryVideoFeed()">
+                    <mat-icon>refresh</mat-icon>
+                    Retry Connection
+                  </button>
+                </div>
+              </div>
+              <div class="video-status" *ngIf="!videoError">
+                <mat-icon class="status-icon success">videocam</mat-icon>
+                <span>Camera feed active - face recognition enabled</span>
+              </div>
+            </div>
+
+            <div class="manual-attendance">
+              <h4>Manual Attendance</h4>
+              <p class="manual-description">If automatic recognition doesn't work, select your name manually:</p>
+              
+              <form [formGroup]="attendanceForm" (ngSubmit)="onMarkAttendance()">
+                <mat-form-field appearance="fill" class="full-width">
+                  <mat-label>Select Your Name</mat-label>
+                  <mat-select formControlName="name">
+                    <mat-option value="" disabled>
+                      <em>Choose your name from the list</em>
+                    </mat-option>
+                    <mat-option *ngFor="let face of registeredFaces" [value]="face">
+                      {{ face }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint *ngIf="registeredFaces.length === 0">No registered faces found. Please register first.</mat-hint>
+                  <mat-error *ngIf="attendanceForm.get('name')?.hasError('required')">
+                    Please select your name
+                  </mat-error>
+                </mat-form-field>
+
+                <button mat-raised-button 
+                        color="accent" 
+                        type="submit" 
+                        [disabled]="!attendanceForm.valid || isMarkingAttendance"
+                        class="submit-button">
+                  <mat-icon *ngIf="!isMarkingAttendance">check_circle</mat-icon>
+                  <mat-spinner *ngIf="isMarkingAttendance" diameter="20"></mat-spinner>
+                  <span>{{ isMarkingAttendance ? 'Marking...' : 'Mark Attendance' }}</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Attendance Records Tab -->
+        <mat-tab label="Attendance Records">
+          <div class="tab-content">
+            <div class="records-header">
+              <h3>Attendance History</h3>
+              <button mat-stroked-button 
+                      (click)="loadAttendanceRecords()"
+                      [disabled]="isLoadingRecords"
+                      class="refresh-button">
+                <mat-icon *ngIf="!isLoadingRecords">refresh</mat-icon>
+                <mat-spinner *ngIf="isLoadingRecords" diameter="18"></mat-spinner>
+                <span>{{ isLoadingRecords ? 'Loading...' : 'Refresh' }}</span>
+              </button>
+            </div>
+
+            <div class="records-container" *ngIf="attendanceRecords.length > 0 && !isLoadingRecords; else noRecordsTemplate">
+              <div class="records-summary">
+                <mat-icon>analytics</mat-icon>
+                <span>Total Records: {{ attendanceRecords.length }}</span>
+              </div>
+              
+              <mat-list class="attendance-list">
+                <mat-list-item *ngFor="let record of attendanceRecords; let i = index" 
+                               [class.recent-record]="i < 3">
+                  <mat-icon mat-list-icon 
+                           [class.recent-icon]="i < 3">event_available</mat-icon>
+                  <div mat-line class="record-name">{{ record.name }}</div>
+                  <div mat-line class="record-time">{{ formatDateTime(record.timestamp) }}</div>
+                  <div mat-line class="record-date">{{ formatDate(record.date) }}</div>
+                  <mat-chip *ngIf="i < 3" class="recent-chip">Recent</mat-chip>
+                </mat-list-item>
+              </mat-list>
+            </div>
+
+            <ng-template #noRecordsTemplate>
+              <div class="no-records" *ngIf="!isLoadingRecords">
+                <mat-icon class="large-icon">event_busy</mat-icon>
+                <h4>No Attendance Records</h4>
+                <p>Attendance records will appear here once people start marking their attendance.</p>
+                <button mat-raised-button color="primary" (click)="selectedTabIndex = 1">
+                  <mat-icon>add_task</mat-icon>
+                  Mark First Attendance
+                </button>
+              </div>
+              <div class="loading-records" *ngIf="isLoadingRecords">
+                <mat-spinner diameter="40"></mat-spinner>
+                <p>Loading attendance records...</p>
+              </div>
+            </ng-template>
+          </div>
+        </mat-tab>
+
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>
